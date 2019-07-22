@@ -1,0 +1,17 @@
+git architecture( workspace , staging area , local repo)
+git config -- global [user.name | user.email | merge.tool | diff.tool]
+git log [--oneline] 
+git commit [--amend ] , git reflog
+git branch  
+git merge , git rebase
+git clone , pull , fetch , push 
+git cherry-pick 
+git checkout  
+git reset [--soft | --mixed | --hard ]
+git clean [-n (dry run) | -f (force delete all untracked changes)] 
+git revert
+git stash [(to send staged files to stash)| -u (include untracked , to stach untracked and staging) | -a ( untracked , staged , .gitignore as well) | list (to show all stashes) | pop (to unstach latest stash) | apply stash@{stash_number} (unstash particular stash) | git stash clear(clear the stashes) ]
+Rearraging commits ( git rebase -i HEAD-3 ) Here 3 means latest 3 commits. Can rearrage in vi editor.
+Merging of multiple commits-Squashing (git rebase -i HEAD~5) Here 5 means latest 5 commits. ~ is for squashing. Replace "pick" with "squash". All squashes will be merged.
+git tags - light weight tag , annotated tag. [ git tag (to see list of all tags) | git tag tag_name (light tag for head pointed commit) | git tag -a tag_name -m "message" (annotated tag for present head commit) | git show tag_name(detailed annotated tag details) | git tag -a tag_name -m "message" commit_id (tagging particular commit) | git tag -d tag_name (delete a tag)| git push  --tags (push tags to remote repo) | git push origin :tag_name (delete particular tag from remote github) ]
+

@@ -1,0 +1,10 @@
+parameterized builds from git using tags , branches , etc.
+build automation with poll scm , building periodically , build with webhooks[ can use ngrok]
+email notifications , extended email notification
+[pending*] nexus , sonarqube , junit integration
+slave nodes creation using password or private key.
+upstream , downstream piping between jobs.
+pipeline view
+scripted pipelines.
+declarative pipeline syntax.
+
