@@ -1,0 +1,9 @@
+FROM ubuntu
+MAINTAINER vamsi
+RUN apt-get update
+RUN apt-get install default-jdk -y
+RUN apt-get install wget -y
+RUN wget http://apache.org/dist/tomcat/tomcat-8/v8.5.41/bin/apache-tomcat-8.5.41.tar.gz && tar zxvf apache-tomcat-8.5.41.tar.gz
+#CMD ["sh","/apache-tomcat-8.5.41/bin/startup.sh"]
+#CMD tail -f /dev/null
+CMD sh /apache-tomcat-8.5.41/bin/startup.sh && tail -f /dev/null

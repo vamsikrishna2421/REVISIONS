@@ -1,0 +1,29 @@
+node{
+    stage('GIT Checkout'){
+        git(url:'https://github.com/javahometech/my-app.git',branch:'master') 
+    }
+    stage('Mvn Package'){
+        def mvnHome = tool name: 'Maven', type: 'maven'
+        def mvnCMD = "${mvnHome}/bin/mvn"
+        sh label: '', script: "${mvnCMD} clean package"
+    }
+    stage('Build docker image'){
+        sh 'docker build -t lekkala/docker_app:1.0 .'
+    }
+    stage('Push docker image'){
+        withCredentials([string(credentialsId: 'dockerpass', variable: 'dockerpass')]) {
+            sh "docker login -u lekkala -p ${dockerpass}"
+        }
+        sh 'docker push lekkala/docker_app:1.0'
+    }
+    stage('Run conatiner on dev server'){
+        def dockerRun = 'docker run -p 8080:8080 -d --name docker-app lekkala/docker_app:1.0'
+        sshagent(['docker-dev-space']) {
+            sh "ssh -o StrictHostKeyChecking=no ubuntu@3.84.11.191"
+            sh "docker stop docker-app"
+            sh "docker rm docker-app"
+            sh "sleep 30"
+            sh "${dockerRun}"
+        }
+    }
+}

@@ -1,0 +1,113 @@
+Docker - impemented in GoLang
+
+
+Docker networking:
+Drivers [  Libnetwork [ Container Network Model ]  ]
+CNM: Design , DNA of Docker Networking - Specializations from Docker Inc.
+	Multiple(Sandbox+Endpoint) ----> Network
+Libnetwork: Central place for all docker networking logic , API , UX
+	written in golang
+	Real world implementation of CNM.
+Drivers: To make container part of a network ,  drivers make them pluggable.
+	Types: Overlay , MACVLAN , IPVLAN , Bridge , NULL(No network)
+ 
+
+	#docker network ls
+	to see all network names
+	#docker network inspect container-name|id
+	to see networking details of container
+
+default bridge hosts cant ping eachother with container name , can only ping with ip addr.
+Custom bridge hosts can ping with container names , with the help of dns service discovery service by docker.
+
+
+Libnetwork contains:
+[ Service Discovery , Load balancing , IPAM(IP address mgmt) , Distributed KV store , Encryption , Network gossip , etc]
+
+To use libnetwork's load balancer , we need to use docker swarm.
+Service discovery : Resolving names,ip addresses.
+
+#docker network ls
+	in the output:
+		NETWORK ID
+			Unique ID for each network.
+		DRIVER
+			Type of driver whther bridge or overlay or null
+		NAME
+			Name of network
+		SCOPE
+			swarm=multi-host #means different physical machines
+			local=single-host
+
+
+SINGLE HOST NETWORKING
+	Containers can only communicate with other within same system.
+
+	#docker network create -d bridge --subnet 10.1.0.0/24 bridge_name
+	To create a network
+	default of --driver | -d is bridge.
+	#docker network ls
+	list networks
+
+ 
+	Create a container in bridge_name network
+	#docker run -dt --name c1 --network bridge_name ubuntu:latest sleep 1d
+	#docker run -dt --name c2 --network bridge_name ubuntu:latest sleep 1d
+	#docker network inspect c1
+	#docker network inspect c2
+	Can ping eachother with container names also
+	
+
+
+MULTI-HOST NETWORKING
+	* with docker overlay driver.
+	* host machines must be pungable to create a overlay network.
+	* uses UDP(4789) protocol for communication.
+SETUP:
+	* install docker on both hosts
+	* ensure following ports to be open: [ 2789/udp , 7946/tcp/udp , 2377/tcp ] 
+	* on first machine execute "docker swarm init"
+	* on second machine execute "docker swarm join"
+	* execute "docker network ls" to see network with driver as overlay
+	* execute "docker node ls" to see nodes
+	* to create new network
+		docker network create -d overlay overlay_name
+	  this overlay_name wont be visible to others unless container is cretaed in it.
+	* create a service on overlay_name
+		docker service create --name con-service-node --network overlay_name --replicas 3 hello-world sleep 1d
+	* To see status of all services.
+		docker service ps ps-svc
+---on swarm network , we will have services instead of containers.
+
+
+More:
+docker network connect | disconnect -->related tasks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

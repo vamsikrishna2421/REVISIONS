@@ -1,0 +1,64 @@
+{
+    "AWSTemplateFormatVersion":"2010-09-09",
+    "Description":"My ssh bastion host",
+    "Resources":{
+        "WebserverSG" : {
+          "Type" : "AWS::EC2::SecurityGroup",
+          "Properties" : {
+            "GroupDescription" : "security group for cloudformaion created web server",
+            "SecurityGroupIngress" : [ 
+                {
+                    "IpProtocol":"tcp",
+                    "FromPort":80,
+                    "ToPort":80,
+                    "CidrIp":"0.0.0.0/0"
+                }
+            ]
+          }
+        },
+        
+        "EC2CfInstance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": "my-linux-pass",
+                "ImageId": "ami-0b3046001e1ba9a99",
+                "InstanceType": "t2.micro",
+                "SecurityGroupIds" : [
+                { "Ref": "WebserverSG" }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "mytagname"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash \n",
+                                "yum update -y \n",
+                                "yum install httpd -y \n",
+                                "service httpd start \n",
+                                "systemctl enable httpd \n",
+                                "echo 'hello vamsi'>/var/www/html/index.html \n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        
+        "eipCf": {
+            "Description": "eip from cf",
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "InstanceId":
+                { "Ref": "EC2CfInstance" }
+                
+            }
+        }
+        
+    }
+}

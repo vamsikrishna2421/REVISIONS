@@ -1,0 +1,30 @@
+	git init
+ 1446  git add .
+ 1447  git commit -m "empty chef-repo commiting"
+ 
+ 1449  git remote add origin https://github.com/vamsikrishna2421/chef-repo.git
+ 1450  git push -u origin master
+
+ 1454  git commit -m "after moving local cookbooks to chef-repo cookbooks"
+ 1455  git status
+ 1460  git add .
+
+
+ 1479  cd firstbook/
+ 1480  ll
+ 1481  sudo rm -rf .git .gitignore
+
+ 1486  git commit -m " resolved git repo problem inside firstbook cookbook"
+ 1487  git push -u origin master
+
+
+ 1463  knife bootstrap 35.154.105.25 --ssh-user ec2-user --sudo -i my-linux-pass.pem -N myawsnode
+ 1464  knife node list
+ 1465  knife cookbook upload cookbook firstbook
+ 1466  knife node run_list set myawsnode "recipe[firstbook::web_server_recipe]"
+
+
+ 1467  tree
+ 1468  nano cookbooks/firstbook/recipes/web_server_recipe.rb 
+ 1469  knife cookbook upload firstbook
+ 1470  knife node run_list set myawsnode "recipe[firstbook::web_server_recipe]"

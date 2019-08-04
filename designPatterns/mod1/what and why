@@ -1,0 +1,159 @@
+WHAT?
+* templates for solving a common problems.
+* not any ocde. Its just a guideline how to solve certain problem.
+* First book: ELEMENTS OF REUSABLE OBJECT-ORIENTED SOFTWARE
+* Published in 1995 , book names and describes 23 object oriented design patterns.
+* This book is regarded as first book of formalization of design patterns.
+
+WHY USEFUL?
+* Provide guidelines for solving a well-known problem.
+* More readable and maintainable code.
+* gives a common vocabulary to talk about software solutions.
+
+PITFALLS?
+* Knowing when to use them.
+* Different interpretations can cause confusion.
+
+HOW CLASSIFIED?
+* Creational
+* Structural
+* Behavourial
+
+Creational?
+* Factory
+* Abstract Factory
+* Builder
+* Prototype
+* Singleton versus Borg
+
+Structural?
+* MVC (model-view-controller)
+* Facade
+* Proxy
+* Decorator
+* Adaptor
+
+Behavourial?
+1.
+* Command
+* Interpreter
+* State
+* Chain of responsibility
+* Strategy
+2.
+* Observer
+* Memento
+* Template
+* Reactive design patterns
+
+Inbuild python features that are implementation of patterns.
+* Iterables and iterators
+* List comprehension
+* Wrapper functions(or decorators)
+
+Iterating in python!
+iterator: uses __next__ method.
+iterable is an object that you get from an iterator.
+list comprehension is a tool for transforming any iterable into a new list.
+elements of iterable are conditionally included and transformed as required.
+
+Practicals:
+>>> list=[1,2,3]
+>>> for i in list:
+... print(i)
+  File "<stdin>", line 2
+    print(i)
+        ^
+IndentationError: expected an indented block
+>>> for i in list:
+...     print(i)
+... 
+1
+2
+3
+>>> iter=list.__iter__()
+>>> iter
+<list_iterator object at 0x7f7f314a9a20>
+>>> iter.__next__()
+1
+>>> iter.__next__()
+2
+>>> iter.__next__()
+3
+>>> iter.__next__()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+
+>>> numbers=[1,2,3,4,5]
+>>> numbers_again=[n for n in numbers]
+>>> numbers_again
+[1, 2, 3, 4, 5]
+>>> even_numbers=[n for n in numbers if n%2==0]
+>>> even_numbers
+[2, 4]
+>>> odd_squares=[n**2 for n in numbers if n%2==1]
+>>> odd_squares
+[1, 9, 25]
+>>> matrix=[[1,2,3],[4,5,6],[7,8,9]]
+>>> flat=[n for row in matrix for n in row]
+>>> flat
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+Decorator or Wrappers
+* A decorator is a function that takes another function and extends the behaviour of second function without explicitly modifying it.
+* Can be reused across multiple functions(but does not app;y to classes).
+
+practicals:
+>>> from time_wrapper import timing_function, my_function
+>>> wrapped_func=timing_function(my_function)
+>>> wrapped_func
+<function timing_function.<locals>.wrapper at 0x7f058d3dbbf8>
+>>> wrapped_func()
+
+ sum of all the numbers: 49995000
+time it took to run the function: 0.0049555301666259766
+
+
+>>> from time_decorator import my_function
+>>> my_function()
+
+ sum of all the numbers: 49995000
+time it took to run the function: 0.0017256736755371094
+
+
+INHERITANCE?
+When a new class(subclass) is created from an existing class(parent class).
+* Overriding - providing different implementaion of method defined by superclass
+* Overloading - ability to define same method with the same name but different arguments.
+* __bases__ : 
+* __subclasses__ :
+
+>>> from inheritance import Pet,Dog
+>>> p=Pet("Polly","Parrot")
+>>> p.__str__()
+'Polly is a Parrot'
+>>> from inheritance import Pet,Dog
+>>> d=Dog("Fred",True)
+>>> d.__str__()
+'Fred is a Dog who chases cats'
+>>> Dog.__bases__
+(<class 'inheritance.Pet'>,)
+>>> Pet.__subclasses__()
+[<class 'inheritance.Dog'>]
+
+Multiple-Inheritance?
+__mro__ : method resolution order
+
+>>> from multiple_inheritance import A,B,C
+>>> c=C()
+A
+>>> c.__mro__
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'C' object has no attribute '__mro__'
+>>> C.__mro__
+(<class 'multiple_inheritance.C'>, <class 'multiple_inheritance.A'>, <class 'multiple_inheritance.B'>, <class 'object'>)
+>>> c.foobar()
+foo
+bar

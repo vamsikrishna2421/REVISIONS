@@ -1,0 +1,26 @@
+
+
+Installation for prod env:Kubeadm
+Installation for dev env:minikube
+
+
+SERVICES:
+	* Its like load balancer in AWS cloud.Who has fixed dns name. 
+	* Uses random load balancing by default. We can even configure to use round robin also.
+	* It uses labels to manage pods.
+	* It can point out o pods which are not even part of your cluster.
+	* Uses TCP by default. UDP also supported.
+	* If service crashes , it rarely happens.If happens , service is light weight component , doesnt take time to bring up new service.
+	* We can load balance the services also. For High availability of services. Very rarelt used.
+	* Its present on Node only because it needs ip address and service discovery capabilities. Or else no reason tohave it on node.
+
+
+
+Deployments:
+	* simple roll back to prev. version of faulty vesions.
+	* 
+	
+Objects in k8s API:
+	[Pods:"Atomic unit of scheduling" , Replication Controllers:" Scale pods to desired state,etc" , Deployments:"RC+rolling updates,rollbacks" , Services:" Stable networking"]
+
+

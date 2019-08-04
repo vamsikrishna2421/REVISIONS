@@ -1,0 +1,90 @@
+{
+    "AWSTemplateFormatVersion":"2010-09-09",
+    "Parameters":{
+        
+        "KeyName": {
+            "Description": "Keypair to login to ec2",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "Default": "my-linux-pass"
+        },
+        
+        "VPC": {
+            "Description": "In which vpc to be hosted",
+            "Type": "AWS::EC2::VPC::Id"
+        },
+        
+        "InstanceType": {
+            "Description": "Instance type",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues":["t2.micro","t2.nano"]
+        }  
+    },
+    "Resources":{
+        
+        "MyCfEc2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": 
+                { "Ref": "KeyName" }
+                ,
+                "DisableApiTermination": "false",
+                "ImageId": "ami-0b3046001e1ba9a99",
+                "InstanceType": { "Ref": "InstanceType" },
+                "SecurityGroupIds" : [
+                { "Ref": "MyCfSecurityGroup" }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SomeName"
+                    },
+                    {
+                        "Key": "Owner",
+                        "Value": "SomeOwner"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash \n",
+                                "yum -y update \n",
+                                "yum install httpd -y \n",
+                                "service httpd start \n",
+                                "systemctl enable httpd \n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        
+        "MyCfSecurityGroup" : {
+          "Type" : "AWS::EC2::SecurityGroup",
+          "Properties" : {
+            "GroupDescription" : "Securty group for stack ec2 instance",
+            "SecurityGroupIngress" : [ 
+              {
+                "IpProtocol":"tcp",
+                "ToPort":"22",
+                "FromPort":"22",
+                "CidrIp":"0.0.0.0/0"
+              },
+              {
+                "IpProtocol":"tcp",
+                "ToPort":"80",
+                "FromPort":"80",
+                "CidrIp":"0.0.0.0/0"
+              }
+            ],
+            "VpcId" : 
+            { "Ref": "VPC" }
+            ,
+            "Tags" :  [ {"Key":"Name","Value":"SomeSG"} ]
+          }
+        }
+        
+    }
+}

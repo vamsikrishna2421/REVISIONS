@@ -1,0 +1,99 @@
+Src:Quality Thought by Khaja
+
+Kubernetes Architecture
+	* Container Ochestration
+	* Borg(Prop)--> Omega(Prop) --> Kubernetes(open source)
+	* Kubernetes supports Rocket(Core OS) , Docker
+	* K8s
+	* Donated to CNCF(Cloud native container foundation) in 2014
+	* Supports all the clouds
+	* Competators: Apache Mesos , Docker swarm
+WHY?
+	* Scalability challenge.
+	* ...
+
+
+Master ---- [ API-Server , Key-Value Cluster Store , Controller , Scheduler]
+To make highly available - we use multi-master.
+
+API_Server:
+	* Front-end to the control plane
+	* Exposes the API
+	* Consumes JSON (via manifest files)
+
+Cluster Store:
+	* Persistent storage
+	* uses etcd - distributed kv store. Developed by core OS team.
+	* Distributed , consistent , watchable
+	* Also called "source of truth" for the cluster
+	* Recommended to have a backup plan for it.
+
+Kube-controller-manager:
+	[ Node COntroller , Endpoints controller , Namespace Controller , etc ]
+	* This watches for changes 
+	* Helps maintain desired state
+
+Scheduler:
+	* Watches apiserver for new pods
+	* Assigns wok to nodes - affinity/anti-affinity , consstraints , resources , ...
+
+
+To interact with API-Server from command line , We use "kubectl"
+
+
+NODES OR MINIONS:
+	[ Kube Agent , Container engine , Kube proxy ]
+
+Kube Agent or Kubelet:(ambassador of master in node)
+	* If a machine has keubelet , it is called node.
+	* Dumb agent , doesnt take any decisions. Reports changes to controller , performs tasks scheduled by scheduler.
+	* Instantiates pods.
+	* Reports back to master.
+	* Exposes endpoint on :10255
+
+Container Engine:(containerization)
+	* Does container management.
+	* Pulling images , starting/stopping containers.
+	* Pluggable : Usually Docker , Can be rkt.
+
+Kube-proxy:(assign ip , load balance)
+	* Kubernetes networking.
+	* Pod IP Addresses 
+		All containers in a pod share a single ip address.
+		Balances load across all pods in a service.
+
+
+Declarative model & Desired state:
+	Manifest file contains declarative language which states desired state. 
+	*ex: manifest says I need 3 nginx pods.
+	Now API-server takes the manifest files and creates 3 pods with each pod containing one nginx container.
+	If one node gets crashed. Now we are left with only two nodes availability.
+	Kubernetes launches one more pod in one of the node.So desired state is maintained.
+	* K8s maintains complete state or no state at all.
+
+
+	
+
+POD:
+	* minimum unit in k8s.
+	* its a network stack and kernal namespace.
+
+POD's Lifecycle: [ Pending--> running --> succeded/failed ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

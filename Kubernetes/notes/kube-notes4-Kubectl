@@ -1,0 +1,78 @@
+kubeadm join 172.31.80.177:6443 --token tcs0y9.q7nncr57fzkgkd1o \
+    --discovery-token-ca-cert-hash sha256:b23749757f7b7399c4badfb71ebe87369fff9ad7a919c64f9e05856549788e1d
+
+
+#Pod manifest: using pod.yml
+
+kubectl get nodes
+kubectl create -f pod.yml
+kubectl get pods
+kubectl describe pods
+kubectl get pods -o wide
+kubectl get pods/hello-pod
+kubectl get pods --all-namespaces
+kubectl delete pods/hello-pod
+
+#ReplicationController manifest: using rc.yml
+
+kubectl create -f rc.yml
+kubectl get rc
+kubectl get pods
+kubectl describe rc hello-rc
+
+NOW UPDATE "replicas: 6" in rc.yml
+kubectl apply -f rc.yml
+kubectl get rc
+kubectl get pods
+
+
+Service manifest: using svc.yml
+
+kubectl create -f svc.yml
+kubectl get svc
+kubectl describe svc hello-svc
+
+to create a service from command line for a replicationController
+kubectl expose \
+    replicationController-name \
+    type-NodePort,etc \
+    service-name 
+
+Instead of using kubectl create , we can use kubectl run command with all variables in command itself.
+But this way is not recommended. Manifest file way gives version control and rollingUpdate features.
+
+
+
+DEPLOYMENT Manifest: using deploy.yml
+
+kubectl create -f deploy.yml
+kubectl describe deploy jenkins-deploy
+kubectl get rs 
+kubectl describe rs
+
+ROLLING UPDATE TO THE DEPLOYMENT
+kubectl apply -f deploy.yml --record
+    --record is used to say kubernetes to save this version for rolling back in failures.
+kubectl rollout status deployments jenkins-deploy
+    to see status of deployments
+kubectl get deploy jenkins-deploy
+    to list deployments
+kubectl rollout history deployments jenkins-deploy
+    to see all the previous replicaSets
+kubectl get rs
+
+
+
+UNDO ROLLED UPDATE:
+kubectl describe deploy jenkins-deploy
+kubectl rollout undo deployment jenkins-deploy --to-revision=1
+kubectl get deploy
+kubectl rollout status deployments jenkins-deploy
+
+
+KILL EVERYTHING:
+kubectl delete svc hello-svc
+kubectl delete rc hello-rc
+kubectl get pods
+
+

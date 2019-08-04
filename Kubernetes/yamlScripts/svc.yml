@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  hello-svc
+  labels:
+    app: nginx
+spec:
+  selector:
+    app:  nginx
+    version: 1.0
+  type:  NodePort
+  ports:
+  - protocol:  TCP
+    port:  80
+    nodePort: 30001

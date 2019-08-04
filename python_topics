@@ -1,8 +1,0 @@
--DataStructures:list,tuple,dictionary,set,generator
- Modules:os,random,csv,collections.namedtuple,beautifulsoup4,requests,json,re
- OOPS concepts in python.
-
--Using magic dunders ,special helper functions:isinstance(),issubclass()
- Working with file objects and csv files
- Duck typing,Context Managers,Decorators,prefix decorators,property decorator.
-

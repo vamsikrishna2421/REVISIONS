@@ -1,0 +1,147 @@
+Src:https://www.youtube.com/playlist?list=PLH1ul2iNXl7u2MZYbet0CLpLC3uAPmXs1
+
+
+KUBERNETES
+	Platform for orchestrating docker containers.
+
+Objectives of Kubernetes is to automate
+	* Application deployment
+	* Auto Scaling
+	* Cluster maintenance.
+
+POD 
+	atomic unit of deployment
+	Can contain multiple containers.
+	Must run on different ports , cant use same port
+	Multiple pods on one node
+	Containers within same pod can communicate with localhost:port
+	Yaml scripts will help to deploy containers in pods.
+ex:pods.yml
+	apiVersion: v1
+	kind: Pod
+	metadata:
+	    name: first-app
+	    labels:
+		app: nodeapp #pod_name
+	spec:
+	    containers:
+	      - name:nodeapp1 #con_name
+		image: kammana/nodeapp:v1
+		ports:
+		  - containerPort: 8080
+
+
+#kubectl get pods
+to see all pods with details
+#kubectl delete -f pods.yml
+to delete previously created pods from pods.yml
+#kubectl create -f pods.yml
+to create pods from pods.yml
+
+To access applications inside pods , we need services.
+
+To see more emta information abt pod.
+#kubectl describe pod nodeapp   (just like : docker inspect conatiner_id)
+
+To get logs about a pod
+#kubectl logs pod_name
+	Just like:
+		#docker logs ContainerName/ContainerID
+		To follow docker log output or tail continuously
+		#docker logs --follow ContainerName/ContainerID
+		In this case, last 2500 lines will be displayed
+		#docker logs --tail 2500 ContainerName/ContainerID
+		#docker logs --since 2017-05-03 ContainerName/ContainerID
+		#docker logs --since 2017-05-03 ContainerName/ContainerID
+		#docker logs --since 2017-05-03T10:00 ContainerName/ContainerID
+
+To get logs specific container of pod
+#kubectl logs pod_name -c con_name
+
+To execute commands on pods
+#kubectl exec pod_name -- <cmd>
+To execute commands on container of a pod
+#kubectl exec pod_name -c con_name -- <cmd>
+
+
+To enter inside a container in docker we use:
+#docker exec -it con_name /bin/bash
+Similarly in kube
+#kubectl exec -it pod_name -- bash
+Similarly in kube , into specific container
+#kubectl exec -it pod_name -c con_name -- bash
+
+
+Kubernetes Service:
+	* We cant access pods deployed in the cluster directly from outside.
+	* Because pods ip changes everytime it is rebooted or replaced with new pod during pod crash. But service object wont crash , never die. Servce routes traffic to pod. 
+	* Services provide seemless integration between App Client and pods.
+	* Service act like load balancer for pods in a cluster.
+	* new pods regenerated are automatically added to service in a cluster
+
+How to join pods with a service? ---->LABELS
+metadata:
+    name: first-app
+    labels:
+        app: nodeapp
+All pods matching specific label are binded with specific service.
+YAML FILE OF A SERVICE:
+	ex:services.yml
+		kind: Service
+		apiVersion: v1
+		metadata:
+		    name: my-service
+		spec:
+		    selector:
+			app: nodeapp
+		    ports:
+		      - protocol: TCP
+			port: 80
+			targetport: 8080
+		    type: Nodeport
+
+Deploy service object into Kube cluster
+#kubectl create -f services.yml
+To see all services
+#kubectl get svc
+:Note the port exposed port of my-service(lets say ex-port=32285).
+
+To access this service outside the cluster , Needed ip of node.
+To see ip of host on which minikube cluster is running.
+#minikube ip
+192.168.99.100
+#curl http://192.168.99.100:32285
+html code is shown
+
+Enter into cluster
+#minikube ssh
+#curl http://<svc-ipaddr>:80
+html code displayed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
