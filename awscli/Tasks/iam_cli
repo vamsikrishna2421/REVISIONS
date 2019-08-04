@@ -1,0 +1,113 @@
+1. Create a user
+2. Create a group
+3. Assigning user to group
+4. Assigning policy to user
+5. Create console login password
+6. Create AccessKey
+7. Delete AccessKey
+8. Delete user and group
+
+1.
+$ aws iam create-user --user-name iamCliPracticeUser
+{
+    "User": {
+        "Path": "/",
+        "UserName": "iamCliPracticeUser",
+        "UserId": "AIDAWKHHMYNDUF3ZYZWQ4",
+        "Arn": "arn:aws:iam::434276975431:user/iamCliPracticeUser",
+        "CreateDate": "2019-06-27T12:10:19Z"
+    }
+}
+
+2.
+$aws iam create-group --group-name iamCliPracticeGroup
+{
+    "Group": {
+        "Path": "/",
+        "GroupName": "iamCliPracticeGroup",
+        "GroupId": "AGPAWKHHMYND7G6IAL244",
+        "Arn": "arn:aws:iam::434276975431:group/iamCliPracticeGroup",
+        "CreateDate": "2019-06-27T12:06:37Z"
+    }
+}
+
+3.
+$ aws iam add-user-to-group --user-name iamCliPracticeUser --group-name iamCliPracticeGroup
+
+Verify whether added.
+$ aws iam get-group --group-name iamCliPracticeGroup
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "iamCliPracticeUser",
+            "UserId": "AIDAWKHHMYNDUF3ZYZWQ4",
+            "Arn": "arn:aws:iam::434276975431:user/iamCliPracticeUser",
+            "CreateDate": "2019-06-27T12:10:19Z"
+        }
+    ],
+    "Group": {
+        "Path": "/",
+        "GroupName": "iamCliPracticeGroup",
+        "GroupId": "AGPAWKHHMYND7G6IAL244",
+        "Arn": "arn:aws:iam::434276975431:group/iamCliPracticeGroup",
+        "CreateDate": "2019-06-27T12:06:37Z"
+    }
+}
+
+
+4.
+$export POLICYARN=$(aws iam list-policies --query "Policies[?PolicyName=='PowerUserAccess'].{ARN:Arn}" --output text)
+  Verify
+$echo $POLICYARN
+$aws iam attach-user-policy --user-name iamCliPracticeUser --policy-arn $POLICYARN
+  Verify whether attached policy or not
+$aws iam list-attached-user-policies --user-name iamCliPracticeUser
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "PowerUserAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+    ]
+}
+
+5.
+$aws iam create-login-profile --user-name iamCliPracticeUser --password vamsy24gmailcom --password-reset-required 
+{
+    "LoginProfile": {
+        "UserName": "iamCliPracticeUser",
+        "CreateDate": "2019-06-27T12:31:34Z",
+        "PasswordResetRequired": true
+    }
+}
+
+6.
+$ aws iam create-access-key --user-name iamCliPracticeUser
+{
+    "AccessKey": {
+        "UserName": "iamCliPracticeUser",
+        "AccessKeyId": "AKIAWKHHMYNDU27V724O",
+        "Status": "Active",
+        "SecretAccessKey": "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",
+        "CreateDate": "2019-06-27T12:34:05Z"
+    }
+}
+
+7.
+$ aws iam delete-access-key --user-name iamCliPracticeUser --access-key AKIAWKHHMYNDU27V724O
+
+8.
+$ aws iam delete-user --user-name iamCliPracticeUser
+An error occurred (DeleteConflict) when calling the DeleteUser operation: Cannot delete entity, must delete login profile first.
+
+$ aws iam delete-login-profile --user-name iamCliPracticeUser
+
+$ aws iam delete-user --user-name iamCliPracticeUser
+An error occurred (DeleteConflict) when calling the DeleteUser operation: Cannot delete entity, must detach all policies first.
+
+$ aws iam detach-user-policy --user-name iamCliPracticeUser --policy-arn $POLICYARN
+
+$ aws iam remove-user-from-group --user-name iamCliPracticeUser --group-name iamCliPracticeGroup
+
+$ aws iam delete-user --user-name iamCliPracticeUser

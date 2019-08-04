@@ -1,0 +1,141 @@
+The --generate-cli-skeleton parameter causes the command not to run, but instead to generate and display a parameter template that you can customize and then use as input on a later command. The generated template includes all of the parameters supported by the command.
+
+Ex:
+$ aws ec2 run-instances --generate-cli-skeleton
+{
+    "DryRun": true,
+    "ImageId": "",
+    "MinCount": 0,
+    "MaxCount": 0,
+    "KeyName": "",
+    "SecurityGroups": [
+        ""
+    ],
+    "SecurityGroupIds": [
+        ""
+    ],
+    "UserData": "",
+    "InstanceType": "",
+    "Placement": {
+        "AvailabilityZone": "",
+        "GroupName": "",
+        "Tenancy": ""
+    },
+    "KernelId": "",
+    "RamdiskId": "",
+    "BlockDeviceMappings": [
+        {
+            "VirtualName": "",
+            "DeviceName": "",
+            "Ebs": {
+                "SnapshotId": "",
+                "VolumeSize": 0,
+                "DeleteOnTermination": true,
+                "VolumeType": "",
+                "Iops": 0,
+                "Encrypted": true
+            },
+            "NoDevice": ""
+        }
+    ],
+    "Monitoring": {
+        "Enabled": true
+    },
+    "SubnetId": "",
+    "DisableApiTermination": true,
+    "InstanceInitiatedShutdownBehavior": "",
+    "PrivateIpAddress": "",
+    "ClientToken": "",
+    "AdditionalInfo": "",
+    "NetworkInterfaces": [
+        {
+            "NetworkInterfaceId": "",
+            "DeviceIndex": 0,
+            "SubnetId": "",
+            "Description": "",
+            "PrivateIpAddress": "",
+            "Groups": [
+                ""
+            ],
+            "DeleteOnTermination": true,
+            "PrivateIpAddresses": [
+                {
+                    "PrivateIpAddress": "",
+                    "Primary": true
+                }
+            ],
+            "SecondaryPrivateIpAddressCount": 0,
+            "AssociatePublicIpAddress": true
+        }
+    ],
+    "IamInstanceProfile": {
+        "Arn": "",
+        "Name": ""
+    },
+    "EbsOptimized": true
+}
+
+
+To generate and use a parameter skeleton fil
+1.
+$ aws ec2 run-instances --generate-cli-skeleton > ec2runinst.json
+
+2.
+Open the parameter skeleton file in your text editor and remove any of the parameters that you don't need. For example, you might strip it down to the following.
+{
+    "DryRun": true,
+    "ImageId": "",
+    "KeyName": "",
+    "SecurityGroups": [
+        ""
+    ],
+    "InstanceType": "",
+    "Monitoring": {
+        "Enabled": true
+    }
+}
+
+3.
+Fill in the remaining values with values appropriate for your scenario.
+{
+    "DryRun": true,
+    "ImageId": "ami-dfc39aef",
+    "KeyName": "mykey",
+    "SecurityGroups": [
+        "my-sg"
+    ],
+    "InstanceType": "t2.micro",
+    "Monitoring": {
+        "Enabled": true
+    }
+}
+
+
+4.Run the command with the completed parameters by passing the JSON file to the --cli-input-json parameter using the file:// prefix.
+$ aws ec2 run-instances --cli-input-json file://ec2runinst.json
+A client error (DryRunOperation) occurred when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
+
+5.
+Now you can set the DryRun parameter to false to disable dry run.
+{
+    "DryRun": false,
+    "ImageId": "ami-dfc39aef",
+    "KeyName": "mykey",
+    "SecurityGroups": [
+        "my-sg"
+    ],
+    "InstanceType": "t2.micro",
+    "Monitoring": {
+        "Enabled": true
+    }
+}
+
+6.
+aws ec2 run-instances --cli-input-json file://ec2runinst.json
+
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+Structure Parameters
+
+There must be no white space between each comma-separated key-value pair. Here is an example of the Amazon DynamoDBupdate-table command with the --provisioned-throughput option specified in shorthand.
+$aws dynamodb update-table --provisioned-throughput ReadCapacityUnits=15,WriteCapacityUnits=10 --table-name MyDDBTable
+
+
+
+
+List Parameters
+You can specify Input parameters in a list form in two ways: JSON or shorthand. The AWS CLI shorthand syntax is designed to make it easier to pass in lists with number, string, or non-nested structures.
+
+The basic format is shown here, where values in the list are separated by a single space.
+
+--option value1 value2 value3
+This is equivalent to the following example, formatted in JSON.
+
+--option '[value1,value2,value3]'
+
+$aws ec2 stop-instances --instance-ids i-1486157a i-1286157c i-ec3a7e87
+
+aws ec2 create-tags --resources i-1286157c --tags Key=My1stTag,Value=Value1 Key=My2ndTag,Value=Value2 Key=My3rdTag,Value=Value3
+This is equivalent to the following example, formatted in JSON. The JSON parameter is written in multiple lines for readability.
+
+$ aws ec2 create-tags --resources i-1286157c --tags '[
+  {"Key": "My1stTag", "Value": "Value1"},
+  {"Key": "My2ndTag", "Value": "Value2"},
+  {"Key": "My3rdTag", "Value": "Value3"}
+]'
+
+
+
+

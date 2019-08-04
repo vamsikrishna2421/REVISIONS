@@ -1,0 +1,69 @@
+$ aws ec2 create-key-pair --key-name 'my key pair'
+
+
+Optionally, you can optionally separate the parameter name from the value with an equals sign (=) instead of a space. This is typically necessary only if the value of the parameter starts with a hyphen.
+$ aws ec2 delete-key-pair --key-name=-mykey
+
+Common Parameter Types
+$ aws ec2 describe-spot-price-history help
+$ aws ec2 describe-spot-price-history --start-time 2014-10-13T19:00:00Z
+$ aws ec2 describe-spot-price-history --instance-types m1.xlarge m1.medium
+$ aws ec2 describe-spot-price-history --dry-run
+$ aws ec2 describe-spot-price-history --max-items 5
+$ aws s3api put-object --bucket my-bucket --key testimage.png --body /tmp/image.png
+$ aws dynamodb get-item --table-name my-table --key '{"id": {"N":"1"}}'
+{
+    "Item": {
+        "name": {
+            "S": "John"
+        },
+        "id": {
+            "N": "1"
+        }
+    }
+}
+$ aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro,m1.medium" "Name=availability-zone,Values=us-west-2c"
+[
+  {
+    "Name": "instance-type",
+    "Values": ["t2.micro", "m1.medium"]
+  },
+  {
+    "Name": "availability-zone",
+    "Values": ["us-west-2c"]
+  }
+]
+
+$ aws ec2 describe-instances --filters '{"Name": "instance-type", "Values": ["t2.micro", "m1.medium"]}'
+
+
+
+// Read from a file in the current directory
+$ aws ec2 describe-instances --filters file://filter.json
+
+// Read from a file in /tmp
+$ aws ec2 describe-instances --filters 
+
+$ aws sqs create-queue --queue-name my-queue --attributes file://attributes.json
+attributes.json
+
+{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"arn:aws:sqs:us-west-2:0123456789012:deadletter\", \"maxReceiveCount\":\"5\"}"
+}
+
+
+Remote Files
+$aws ec2 run-instances --image-id ami-12345678 --block-device-mappings http://my-bucket.s3.amazonaws.com/filename.json
+filename.json
+[
+  {
+    "DeviceName": "/dev/sdb",
+    "Ebs": {
+      "VolumeSize": 20,
+      "DeleteOnTermination": false,
+      "VolumeType": "standard"
+    }
+  }
+]
+
+

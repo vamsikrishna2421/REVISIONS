@@ -1,0 +1,9 @@
+1.Install aws cli
+2.configure aws-shell
+3.write a aws s3 cp or sync to take backup of any folder
+4.Configure from scheduled task/cron/acron
+
+1. pip3 Install awscli
+2.apt-get install aws-shell
+3.$ aws s3 sync myCloudFormationTemplates s3://vamsi-aws-commands/s3-demo-backup-folder
+4.

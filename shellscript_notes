@@ -1,0 +1,154 @@
+MODULE 1
+Shell Scripting
+1.I/O
+2.Variables
+3.COnditional exeution(if , then , else , case)
+4.Loops
+5.Arithmetic
+6.String manipulation
+7.Handling script arguments
+8.Shell functions
+
+NOT discussed:portability to other shells,indepth explanation of unix utilities
+
+
+Prerequisites:
+	basic commands of linux,redirection,wild cards,pathname globbing.
+	a sustem with bash installed. Linux contains bash 4.
+
+
+
+MODULE 2
+
+Write a script
+change file permissions: chmod u+x script_name
+sh script_name (or) ./script_name
+
+Shebang:
+	first line starts with #!
+	then mention interpreter as #!/bin/bash (for bash scripts)
+	or can also be mentioned as #!/usr/bin/env bash (finds from user path) this method has drawbacks.
+	
+Naming your script:
+	dont name with predefined commands. like test , if , ls ,etc.
+	how to check whether is a commnd.
+
+Summary:
+Dont forget to set executable permissions : chmod u+x
+First line - #!/bin/bash
+Comments start with #
+add script to ur path if need to call directly: script_name 
+or call it with full path name: ~/script_name
+
+
+MODULE 3
+if then else
+return codes
+conditional expressions
+
+ex:
+	read -p "enter something:" note
+	if [[$note]]; then 
+		echo "$(date):$note" >> $filename
+		echo "got input"
+		else echo "didnt get input"
+	fi
+
+Structure:
+	if testcode; then
+		#if testcode is true, code here gets executed
+	else
+		#if testcode is false , code here is executed
+	fi
+ OR
+	if testcode; then successcode;else failcode; fi
+
+return codes:
+	0 is success
+	other values are error
+	use exit 0 for functions which ran properly
+Conditional expressions:
+	Tests on files n directories
+	test on strings
+	arithmetic tests
+
+	[[ EXpression ]]
+	[[ $str ]] -- true if str is not empty
+	[[ $str = "something" ]]--- true if str is equal to something
+		ALWAYS MAINTAIN SPACES BESIDE =
+		OR IT ALWAYS RETURNS TRUE.
+	[[ -e $filename ]] --- true if file $filename exists
+	[[ -d $dirname ]] --- true if directory $dirname exists
+	
+	MAINTAIN SPACES AFTER [[ AND ]] OR BASH CONSIDERS AS SINGLE COMMAND.
+
+Classical command: test
+	also: [
+	[[ ... ]] is a bash extension
+	$help test for documentation
+	or $help [[
+
+Arithmetic tests
+	only integers | no floating point
+	[[ arg1  OP  arg2 ]]
+	-eq , -ne , -lt , -gt 
+	> , < , = is only for strings.
+Special variables
+	$# contains number of script args
+	$? contains exit status for last ran command
+	${#var} contains lenght of variable value
+
+&& and operator
+|| or operator
+
+DONT USE OLD STYLED: even if help test shows
+	-a for and
+	-o for or	
+
+DONT USE [[ or test:
+	instead use [[
+
+
+
+
+MODULE 11:
+Running code from a file:
+
+
+	
+Run in background
+./myscript &
+Run in background and dont stop even during logout or killinh terminal
+nohup ./myscript &
+Run with lower priority to reduce resource consumption
+nice ./myscript
+nohup ./myscript
+
+
+REdirecting with exec:
+exec>logfile 2>errorlog
+
+RUnning script another time
+At:
+will execute at specific time
+Cron:
+will execute acc to schedule
+launchd(for mac)
+Upstart(Ubuntu)
+
+
+set and shopt
+to customize bash behaviour
+-not for production
+-only for debugging
+
+set:
+	-x : prints each command with argument
+	-u : gives 
+	-n : only read script , dont execute
+	-v : print each command as it is read
+		use -vn for reading script from a file
+	-e : exitsscript whenever a command fails //dont use
+	and many more ..
+shopt	
+

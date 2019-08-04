@@ -1,0 +1,29 @@
+TO CREATE RDS
+1. aws rds create-db-instance --engine mysql --db-instance-identifier mysql-cli-instance --master-username root --master-user-password rootroot --allocated-storage 5 --db-instance-class db.t2.micro --no-multi-az --publicly-accessible 
+TO STOP RDS
+2. aws rds stop-db-instance --db-instance-identifier rds-cli-instance
+TO START RDS
+3. aws rds start-db-instance --db-instance-identifier rds-cli-instance
+TO DELETE RDS
+4. aws rds delete-db-instance --db-instance-identifier rds-cli-instance
+TO CREATE A SNAPSHOT
+5. aws rds create-db-snapshot --db-snapshot-identifier rds-cli-instance-snapshot --db-instance-identifier rds-cli-instance
+TO SEE INFO OF ALL RDS
+6. aws rds describe-db-instances
+TO SEE INFO ONLY FIRST RDS INSTANCE
+7. aws rds describe-db-instances | jq .DBInstances[0]
+TO SEE PARTICULAR ATTRIBUTE INFO OF ALL RDS INSTANCES
+8. aws rds describe-db-instances | jq .DBInstances[].AssociatedStorage
+TO RESTORE DB FROM A SNAPSHOT
+9. aws rds restore-db-instance-from-db-snapshot --db-instance-identifier rds-cli-instance2 --db-snapshot-identifier rds-cli-instance-snapshot --no-multi-az --availability-zone ap-south-1a --deletion-protection
+TO CREATE READ-REPLICAS TO A SOURCE DB
+10.aws rds create-db-instance-read-replica --db-instance-identifier rds-cli-instance-read-replica-1 --source-db-instance-identifier rds-cli-instance
+TO PROMOTE READ_REPLICA
+11.aws rds promote-read-replica --db-instance-identifier rds-cli-instance-read-replica-1
+TO COPY SNAPSHOT 
+12.aws rds copy-db-snapshot --source-db-snapshot-identifier test-db-final-snapshot --target-db-snapshot-identifier snapshot-1
+TO COPY SNAPSHOT TO TARGET REGION
+13.aws rds copy-db-snapshot --source-db-snapshot-identifier test-db-final-snapshot --target-db-snapshot-identifier snapshot-1 --region ap-south-2
+TO DELETE SNAPSHOT
+14.aws rds delete-db-snapshot --db-snapshot-identifier snapshot-2
+HOW TO COPY SNAPSHOT FROM ONE REGION TO OTHER?

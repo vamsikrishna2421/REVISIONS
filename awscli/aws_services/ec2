@@ -1,0 +1,330 @@
+aws ec2 help
+
+topics:
+1.create display , delete key pairs
+2.Security Groups
+3.Ec2 instances
+
+Creating a Key Pair
+$aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+
+Your private key isn't stored in AWS and can be retrieved only when it's created. You can't recover it later. Instead, if you lose the private key, you must create a new key pair.
+
+If you're connecting to your instance from a Linux computer, we recommend that you use the following command to set the permissions of your private key file so that only you can read it.
+
+$ chmod 400 MyKeyPair.pem
+
+
+
+
+Displaying Your Key Pair
+The following example displays the fingerprint for MyKeyPair.
+
+$ aws ec2 describe-key-pairs --key-name MyKeyPair
+{
+    "KeyPairs": [
+        {
+            "KeyName": "MyKeyPair",
+            "KeyFingerprint": "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f"
+        }
+    ]
+}
+
+
+Deleting Your Key Pair
+To delete a key pair, run the following command, substituting MyKeyPair with the name of the pair to delete.
+
+$ aws ec2 delete-key-pair --key-name MyKeyPair
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Create, Configure, and Delete Security Groups for Amazon EC2
+Creating a Security Group
+
+
+###########EC2-VPC
+
+$ aws ec2 create-security-group --group-name my-sg --description "My security group" --vpc-id vpc-1a2b3c4d
+{
+    "GroupId": "sg-903004f8"
+}
+
+
+AWS Documentation » AWS Command Line Interface » User Guide » Using the AWS CLI to Work with AWS Services » Using Amazon EC2 with the AWS CLI » Create, Configure, and Delete Security Groups for Amazon EC2
+Create, Configure, and Delete Security Groups for Amazon EC2
+You can create a security group for your Amazon Elastic Compute Cloud (Amazon EC2) instances that essentially operates as a firewall, with rules that determine what network traffic can enter and leave. You can create security groups to use in a virtual private cloud (VPC), or in the EC2-Classic shared flat network. For more information about the differences between EC2-Classic and EC2-VPC, see Supported Platforms in the Amazon EC2 User Guide for Linux Instances.
+
+You can use the AWS Command Line Interface (AWS CLI) to create a security group, add rules to existing security groups, and delete security groups.
+
+Note
+
+The examples shown below assume that you have already configured your default credentials.
+
+Topics
+
+Creating a Security Group
+Adding Rules to Your Security Group
+Deleting Your Security Group
+Creating a Security Group
+You can create security groups associated with VPCs or for EC2-Classic.
+
+EC2-VPC
+The following example shows how to create a security group for a specified VPC.
+
+$ aws ec2 create-security-group --group-name my-sg --description "My security group" --vpc-id vpc-1a2b3c4d
+{
+    "GroupId": "sg-903004f8"
+}
+To view the initial information for a security group, run the describe-security-groups command. You can reference an EC2-VPC security group only by its vpc-id, not its name.
+
+$ aws ec2 describe-security-groups --group-ids sg-903004f8
+{
+    "SecurityGroups": [
+        {
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "Description": "My security group"
+            "IpPermissions": [],
+            "GroupName": "my-sg",
+            "VpcId": "vpc-1a2b3c4d",
+            "OwnerId": "123456789012",
+            "GroupId": "sg-903004f8"
+        }
+    ]
+}
+
+
+#########EC2-Classic
+The following example shows how to create a security group for EC2-Classic.
+
+$ aws ec2 create-security-group --group-name my-sg --description "My security group"
+{
+    "GroupId": "sg-903004f8"
+}
+To view the initial information for my-sg, run the describe-security-groups command. For an EC2-Classic security group, you can reference it by its name.
+
+$ aws ec2 describe-security-groups --group-names my-sg
+{
+    "SecurityGroups": [
+        {
+            "IpPermissionsEgress": [],
+            "Description": "My security group"
+            "IpPermissions": [],
+            "GroupName": "my-sg",
+            "OwnerId": "123456789012",
+            "GroupId": "sg-903004f8"
+        }
+    ]
+}
+
+#######Adding Rules to Your Security Group
+[EC2-Classic] To add a rule that allows inbound SSH traffic
+
+aws ec2 authorize-security-group-ingress --group-name MySecurityGroup --protocol tcp --port 22 --cidr 203.0.113.0/24
+
+[EC2-Classic] To add a rule that allows inbound HTTP traffic from a security group in another account
+aws ec2 authorize-security-group-ingress --group-name MySecurityGroup --protocol tcp --port 80 --source-group otheraccountgroup --group-owner 123456789012
+
+[EC2-Classic] To add a rule that allows inbound HTTPS traffic from an ELB
+aws ec2 authorize-security-group-ingress --group-name MySecurityGroup --protocol tcp --port 443 --source-group amazon-elb-sg --group-owner amazon-elb
+
+[EC2-VPC] To add a rule that allows inbound SSH traffic
+aws ec2 authorize-security-group-ingress --group-id sg-903004f8 --protocol tcp --port 22 --cidr 203.0.113.0/24
+
+[EC2-VPC] To add a rule that allows inbound HTTP traffic from another security group
+aws ec2 authorize-security-group-ingress --group-id sg-111aaa22 --protocol tcp --port 80 --source-group sg-1a2b3c4d
+
+
+[EC2-VPC] To add two rules, one for RDP and another for ping/ICMP
+aws ec2 authorize-security-group-ingress --group-id sg-1a2b3c4d --ip-permissions IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=172.31.0.0/16}] IpProtocol=icmp,FromPort=-1,ToPort=-1,IpRanges=[{CidrIp=172.31.0.0/16}]
+
+[EC2-VPC] To add a custom ICMP rule
+aws ec2 authorize-security-group-ingress --group-id sg-123abc12 --ip-permissions IpProtocol=icmp,FromPort=3,ToPort=4,IpRanges='[{CidrIp=0.0.0.0/0}]'
+
+Add a rule with a description
+aws ec2 authorize-security-group-ingress --group-id sg-123abc12 --ip-permissions IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges='[{CidrIp=203.0.113.0/24,Description="RDP access from NY office"}]'
+
+
+
+
+TO CHECK UR Ip
+$ curl https://checkip.amazonaws.com
+203.0.113.57
+
+
+NOw add ur ip address range to security group for port rdp to allows
+$aws ec2 authorize-security-group-ingress --group-id sg-903004f8 --protocol tcp --port 3389 --cidr 203.0.113.0/24
+
+FOr SSH
+aws ec2 authorize-security-group-ingress --group-id sg-903004f8 --protocol tcp --port 22 --cidr 203.0.113.0/24
+
+$ aws ec2 describe-security-groups --group-ids sg-903004f8
+{
+    "SecurityGroups": [
+        {
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "Description": "My security group"
+            "IpPermissions": [
+                {
+                    "ToPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "203.0.113.0/24"
+                        }
+                    ]
+                    "UserIdGroupPairs": [],
+                    "FromPort": 22
+                }
+            ],
+            "GroupName": "my-sg",
+            "OwnerId": "123456789012",
+            "GroupId": "sg-903004f8"
+        }
+    ]
+}
+
+
+EC2-Classic
+The following command adds a rule for RDP to the EC2-Classic security group named my-sg.
+
+$ aws ec2 authorize-security-group-ingress --group-name my-sg --protocol tcp --port 3389 --cidr 203.0.113.0/24
+The following command adds another rule for SSH to the same security group.
+
+$ aws ec2 authorize-security-group-ingress --group-name my-sg --protocol tcp --port 22 --cidr 203.0.113.0/24
+
+To view the changes to your security group, run the describe-security-groups command.
+
+$ aws ec2 describe-security-groups --group-names my-sg
+{
+    "SecurityGroups": [
+        {
+            "IpPermissionsEgress": [],
+            "Description": "My security group"
+            "IpPermissions": [
+                {
+                    "ToPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "203.0.113.0/24"
+                        }
+                    ]
+                    "UserIdGroupPairs": [],
+                    "FromPort": 22
+                }
+            ],
+            "GroupName": "my-sg",
+            "OwnerId": "123456789012",
+            "GroupId": "sg-903004f8"
+        }
+    ]
+}
+
+
+
+###ONLY DIFF BETWEEN EC2-VPC type of SG and EC2-CLASSIC type of SG is 
+we use --groud-id for EC2-VPC
+we use --group-name for EC2-CLASSIC
+
+
+
+
+#####DELETING SG
+EC2-VPC
+$ aws ec2 delete-security-group --group-id sg-903004f8
+
+EC2-Classic
+$ aws ec2 delete-security-group --group-name my-sg
+
+
+
+$$$$$$$Launch, List, and Terminate Amazon EC2 Instances
+Topics
+
+Launching an Instance
+Adding a Block Device to Your Instance
+Adding a Tag to Your Instance
+Connecting to Your Instance
+Listing Your Instances
+Terminating an Instance
+
+
+EC2-Launch
+EC2-VPC $aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-903004f8 --subnet-id subnet-6e7f829e
+EC2-CLASSIC $aws ec2 run-instances --image-id ami-173d747e --count 1 --instance-type t1.micro --key-name MyKeyPair --security-groups my-sg
+
+Adding block stoage to instance
+--block-device-mappings "[{\"DeviceName\":\"/dev/sdf\",\"Ebs\":{\"VolumeSize\":20,\"DeleteOnTermination\":false}}]"
+
+adding ebs from existing snapshot
+--block-device-mappings "[{\"DeviceName\":\"/dev/sdf\",\"Ebs\":{\"SnapshotId\":\"snap-a1b2c3d4\"}}]"
+
+adding 2 ebs
+--block-device-mappings "[{\"DeviceName\":\"/dev/sdf\",\"VirtualName\":\"ephemeral0\"},{\"DeviceName\":\"/dev/sdg\",\"VirtualName\":\"ephemeral1\"}]"
+
+just create a ebs instance , dont attach
+--block-device-mappings "[{\"DeviceName\":\"/dev/sdj\",\"NoDevice\":\"\"}]"
+
+
+
+Adding a Tag to Your Instance
+$aws ec2 create-tags --resources i-5203422c --tags Key=Name,Value=MyInstance
+
+######Listing Your Instances
+$aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro" --query "Reservations[].Instances[].InstanceId"
+
+
+The following command lists any of your instances that have the tag Name=MyInstance.
+
+$ aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"
+
+
+The following command lists your instances that were launched using any of the following AMIs: ami-x0123456, ami-y0123456, and ami-z0123456.
+
+$ aws ec2 describe-instances --filters "Name=image-id,Values=ami-x0123456,ami-y0123456,ami-z0123456"
+
+
+
+############Terminating an Instance
+$aws ec2 terminate-instances --instance-ids i-5203422c
+
+
+
+
+

@@ -1,0 +1,723 @@
+😁️INTRODUTION
+1.Mainly, there are two types of machines when we talk about deployment −
+
+	Control machine − Machine from where we can manage other machines.
+
+	Remote machine − Machines which are handled/controlled by control 		machine.
+
+
+2.Control Machine Requirements
+Ansible can be run from any machine with Python 2 (versions 2.6 or 2.7) or Python 3 (versions 3.5 and higher) installed.
+
+Note − Windows does not support control machine.
+
+By default, Ansible uses ssh to manage remote machine.
+
+
+3.Ansible does not add any database. It does not require any daemons to start or keep it running. While managing remote machines, Ansible does not leave any software installed or running on them. Hence, there is no question of how to upgrade it when moving to a new version.
+
+4.Installation through Apt on Ubuntu Machine
+$ sudo apt-get update 
+$ sudo apt-get install software-properties-common 
+$ sudo apt-add-repository ppa:ansible/ansible 
+$ sudo apt-get update 
+$ sudo apt-get install ansible
+
+5. run Ansible–version to check the version
+
+
+😎️ANSIBLE _ YAML BASICS
+1.Every YAML file optionally starts with “---” and ends with “...”.
+
+2.key-value pair
+YAML uses simple key-value pair to represent the data. The dictionary is represented in key: value pair.
+Note − There should be space between : and value.
+Example: A student record
+--- #Optional YAML start syntax 
+james: 
+   name: james john 
+   rollNo: 34 
+   div: B 
+   sex: male 
+… #Optional YAML end syntax 
+
+
+3.Abbreviation
+You can also use abbreviation to represent dictionaries.
+
+Example
+James: {name: james john, rollNo: 34, div: B, sex: male}
+
+4.Representing List
+We can also represent List in YAML. Every element(member) of list should be written in a new line with same indentation starting with “- “ (- and space).
+Example
+---
+countries:  
+   - America 
+   - China 
+   - Canada 
+   - Iceland 
+…
+5.Abbreviation
+You can also use abbreviation to represent lists.
+
+Example
+Countries: [‘America’, ‘China’, ‘Canada’, ‘Iceland’] 
+
+
+6.List inside Dictionaries
+We can use list inside dictionaries, i.e., value of key is list.
+
+Example
+---  
+james: 
+   name: james john 
+   rollNo: 34 
+   div: B 
+   sex: male 
+   likes: 
+      - maths 
+      - physics 
+      - english 
+… 
+
+7.List of Dictionaries
+We can also make list of dictionaries.
+
+Example
+---  
+- james: 
+   name: james john 
+   rollNo: 34 
+      div: B 
+   sex: male 
+   likes: 
+      - maths 
+      - physics 
+      - english 
+
+- robert: 
+      name: robert richardson 
+      rollNo: 53 
+      div: B 
+      sex: male 
+   likes: 
+      - biology 
+      - chemistry 
+…  
+
+
+8.YAML uses “|” to include newlines while showing multiple lines and “>” to suppress newlines while showing multiple lines. Due to this we can read and edit large lines. In both the cases intendentation will be ignored.
+
+9.We can also represent Boolean (True/false) values in YAML. where boolean values can be case insensitive
+
+10.Example
+---  
+- james: 
+   name: james john 
+   rollNo: 34 
+   div: B 
+   sex: male 
+   likes: 
+      - maths 
+      - physics 
+      - english 
+   
+   result: 
+      maths: 87 
+      chemistry: 45 
+      biology: 56 
+      physics: 70 
+      english: 80 
+   
+   passed: TRUE  #boolean value case insensitive
+   
+   messageIncludeNewLines: | 
+      Congratulation!! 
+      You passed with 79% 
+   
+   messageExcludeNewLines: > 
+      Congratulation!! 
+      You passed with 79% 
+
+
+
+11.Some common words related to Ansible.
+Service/Server − A process on the machine that provides the service.
+
+Machine − A physical server, vm(virtual machine) or a container.
+
+Target machine − A machine we are about to configure with Ansible.
+
+Task − An action(run this, delete that) etc managed by Ansible.
+
+Playbook − The yml file where Ansible commands are written and yml is executed on a machine.
+
+
+🙄️ANSIBLE - AD HOC COMMANDS
+1.Ad hoc commands are commands which can be run individually to perform quick functions. These commands need not be performed later.
+
+For example, you have to reboot all your company servers. For this, you will run the Adhoc commands from ‘/usr/bin/ansible’.
+
+These ad-hoc commands are not used for configuration management and deployment, because these commands are of one time usage.
+
+ansible-playbook is used for configuration management and deployment.
+
+⚠️PARALLELISM AND SHELL COMMANDS
+Reboot your company server in 12 parallel forks at time. For this, we need to set up SSHagent for connection.
+
+$ ssh-agent bash 
+$ ssh-add ~/.ssh/id_rsa 
+To run reboot for all your company servers in a group, 'abc', in 12 parallel forks −
+
+$ Ansible abc -a "/sbin/reboot" -f 12
+
+By default, Ansible will run the above Ad-hoc commands form current user account. If you want to change this behavior, you will have to pass the username in Ad-hoc commands as follows −
+
+$ Ansible abc -a "/sbin/reboot" -f 12 -u username
+
+
+⚠️FILE TRANSFER
+You can use the Ad-hoc commands for doing SCP (Secure Copy Protocol) lots of files in parallel on multiple machines.
+
+Transferring file to many servers/machines
+$ Ansible abc -m copy -a "src = /etc/yum.conf dest = /tmp/yum.conf"
+
+Creating new directory
+$ Ansible abc -m file -a "dest = /path/user1/new mode = 777 owner = user1 group = user1 state = directory" 
+
+Deleting whole directory and files
+$ Ansible abc -m file -a "dest = /path/user1/new state = absent"
+
+⚠️MANAGING PACKAGES
+The Ad-hoc commands are available for yum and apt. Following are some Ad-hoc commands using yum.
+
+The following command checks if yum package is installed or not, but does not update it.
+
+$ Ansible abc -m yum -a "name = demo-tomcat-1 state = present"
+The following command check the package is not installed.
+
+$ Ansible abc -m yum -a "name = demo-tomcat-1 state = absent" 
+The following command checks the latest version of package is installed.
+
+$ Ansible abc -m yum -a "name = demo-tomcat-1 state = latest" 
+
+⚠️GATHERING FACTS
+Facts can be used for implementing conditional statements in playbook. You can find adhoc information of all your facts through the following Ad-hoc command −
+
+$ Ansible all -m setup 
+
+
+😱️Ansible - Playbooks
+Playbooks are the files where Ansible code is written. Playbooks are written in YAML format. YAML stands for Yet Another Markup Language. Playbooks are one of the core features of Ansible and tell Ansible what to execute. They are like a to-do list for Ansible that contains a list of tasks.
+Playbooks contain the steps which the user wants to execute on a particular machine. Playbooks are run sequentially. Playbooks are the building blocks for all the use cases of Ansible.
+
+⚠️PLAYBOOK STRUCTURE
+Each playbook is an aggregation of one or more plays in it. Playbooks are structured using Plays. There can be more than one play inside a playbook
+
+The function of a play is to map a set of instructions defined against a particular host.
+
+⚠️CREATE A PLAYBOOK
+Let us start by writing a sample YAML file. We will walk through each section written in a yaml file.
+
+--- 
+   name: install and configure DB
+   hosts: testServer
+   become: yes
+
+   vars: 
+      oracle_db_port_value : 1521
+   
+   tasks:
+   -name: Install the Oracle DB
+      yum: <code to install the DB>
+    
+   -name: Ensure the installed service is enabled and running
+   service:
+      name: <your service name>
+
+
+😥️Ansible Modules
+
+ansible hostORgroup -m module_name -a "arguments" -u username --become
+
+#1) Setup Module
+$ ansible webservers –m setup
+
+#2) Command Module
+$ ansible webservers –m command - an ‘uptime’
+$ ansible webservers –m command –a ‘hostname’
+
+#3) Shell Module
+$ ansible webservers -m shell -a 'ls -l > temp.txt'
+$ ansible webservers –m command -a ‘cat temp.txt’
+
+#4) User Module
+To add user
+$ ansible webservers -m user -a 'name=user1 password=user1' --become
+
+To delete user
+$ ansible webservers -m user -a 'name=user1 state=absent' --become
+
+Options:
+become – Privilege to the superuser to run the command
+state=absent to delete the user
+
+#5) File Module
+Example 1: Create a file
+$ ansible webservers -m file -a 'dest=/home/ansible/niranjan.txt state=touch mode=600 owner=ansible group=ansible'
+
+Example 2: Create a directory
+$ ansible webservers -m file -a "dest=/home/ansible/vndir state=directory mode=755"
+
+To create a directory using the file module, you need to set two parameters.
+
+Path(alias – name, dest) – This is the absolute path of the directory to be created.
+State – You should enter the value as ‘directory.’ By default, the value is ‘file’.
+
+Example 3: Delete a file
+$ ansible webservers -m file -a "dest=/home/ansible/niranjan.txt state=absent"
+
+Example 4: 
+Delete a directory$ ansible webservers -m file -a "dest=/home/ansible/vndir state=absent"
+
+#6) Copy Module
+$ ansible webservers -m copy -a "src=sample.txt dest=/home/ansible/sample.txt"
+
+#7) Managing Software Packages
+Example 1: Install GIT
+$ ansible webservers –m yum -a “name=git state=present” --become
+
+Example 2: Check if the package is installed & update it to the latest version.
+$ ansible webservers -m yum -a “name=git state=latest”
+
+Example 3: Install Apache Webserver
+$ ansible webservers -m yum -a "name=httpd state=present" –become
+
+Example 4: Check if Maven is installed or not.
+$ ansible webservers -m yum -a "name=maven state=absent" –become
+
+#8) Managing Services Module
+Starting a service
+$ ansible webservers -m service -a “name=httpd state=started” --become
+
+Stopping a service
+$ ansible webservers -m service -a “name=httpd state=stopped” --become
+
+Restarting a service
+$ ansible webservers -m service -a “name=httpd state=restarted --become
+
+
+🤯️Ansible Playbooks
+It contains the following sections:
+
+Every playbook starts with 3 hyphens ‘—‘
+ 
+  Host section – Defines the target machines on which the playbook should run. This is based on the Ansible inventory file.
+  Variable section – This is optional and can declare all the variables needed in the playbook. We will look at some examples as well.
+  Tasks section – This section lists out all the tasks that should be executed on the target machine. It specifies the use of Modules. Every task has a name which is a small description of what the task will do and will be listed while the playbook is run.
+
+For Example,
+
+If we need to install and configure Tomcat it will consist of the following tasks:
+
+Download and Install Tomcat
+Configure Tomcat
+Start Tomcat
+
+Similarly, another Example for usage of Tomcat used in the continuous delivery of DevOps, the tasks could be as follows:
+
+Stop application
+Uninstall application
+Install a new version of the WAR file.
+Start application
+
+
+To run any playbook use the following command
+$ ansible-playbook <playbook.yml>
+
+To check the playbook for syntax errors
+$ ansible-playbook <playbook.yml> --syntax-check
+
+To view hosts list
+$ ansible-playbook <playbook.yml> --list-hosts
+
+
+CREATING PLAYBOOKS WITH EXAMPLES
+Example 1: create a file
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Create a file
+    file: path=/home/ansible/niranjan.txt state=touch
+
+Example 2: create a dir
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Create directory
+    file: path=/home/ansible/niranjan state=directory mode=775 owner=ansible group=ansible
+
+Example 3: create multiple dir
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Create multiple directories
+  file: path={{item}} state=directory
+  with_items:
+  - '/home/ansible/vn1'
+  - '/home/ansible/vn2'
+  - '/home/ansible/vn3'
+
+Example 4: create user with password and assign to a group and assign shell to /bin/bash
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Create User
+    user: name=niranjan password=niranjan groups=ansible shell=/bin/bash
+
+Example 5: userdel
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Remove User
+    user:
+    name=niranjan state=absent remove=yes force=yes
+
+Example 6: Copy content to a file using the copy module.
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Copy content to file
+    copy: content="Hello World Niranjan \n" dest=/home/ansible/niranjan.txt
+
+For Example,
+copy: src=/home/ansible/niranjan.txt dest=/tmp/niranjan.txt
+
+Example 7: Replace string(all strings) in a file with another string
+- hosts: webservers
+  tasks:
+  - name: Replace example
+    replace:
+     path: /home/ansible/niranjan.txt
+     regexp: 'hello'
+     replace: "world"
+
+Example 8: Archive or ZIP files and Folders
+Using the Ansible archive module you can compress files or folders to ‘zip’, ‘.gz’, or ‘bz2’ format
+
+Note: The files or folders to be compressed should be available on the target servers and should have the packages for tar, bzip2, gzip, zip file installed on them. You can have a separate playbook task for installing these packages.
+
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Ansible zip file example
+    archive:
+     path: /home/ansible/niranjan.txt
+     dest: /home/ansible/niranjan.zip
+     format: zip
+The above playbook will zip the file niranjan.txt to niranjan.zip file
+
+---
+- hosts: all
+  tasks:
+  - name: Ansible zip multiple files example
+  archive:
+   path:
+    - /home/ansible/niranjan1.txt
+    - /home/ansible/niranjan2.txt
+   dest: /home/ansible/niranjan.zip
+   format: zip
+The above playbook will zip multiple files to niranjan.zip file.
+
+- hosts: all
+  tasks:
+  - name: Ansible zip directory example
+    archive:
+     path:
+      - /home/ansible
+     dest: /home/ansible/niranjan.zip
+     format: zip
+The above playbook will zip all files in the /home/ansible directory.
+
+Example 9: Working with date and timestamp
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Date and Time Example in Ansible
+    debug:
+     var=ansible_date_time.date
+The above playbook displays the date.
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Date and Time Example in Ansible
+  debug:
+   var=ansible_date_time.time
+The above playbook displays the time.
+
+- hosts: all
+  tasks:
+  - name: Ansible timestamp filename example
+    command: touch niranjan{{ansible_date_time.date}}.log
+The above playbook will create a dynamic file based on the current date for E.g. niranjan2018-07-15.log
+
+Example 10: Variables Example
+
+- hosts: all
+  vars:
+ name: niranjan
+  tasks:
+  - name: Ansible Basic Variable Example
+    debug:
+     msg: "{{ name }}"
+We can also have an array or a list of variables as in the below Example.
+
+- hosts: all
+  vars:
+ name:
+   - Vasudevamurthy
+   - Niranjan
+ tasks:
+ - name: Ansible Array Example
+   debug:
+    msg: "{{ name[1] }}"
+
+The indexing of the array starts from ZERO (0). Hence the output in the above example will be Niranjan.
+
+Example 11: Register Variables
+
+We can also capture the output of any task to a register variable.
+
+- hosts: all
+  tasks:
+  - name: Ansible register variable basic example
+    shell: "find *.txt"
+    args:
+     chdir: "/home/Ansible"
+    register: reg_output
+  - debug:
+     var: reg_output
+Note: To display – use the msg attribute and to capture any value use the var attribute in the – debug module
+
+Example 12: Playbook to install vim editor and GIT on the target servers or machines.
+
+In this playbook, we have made use of the yum module to install the latest version of the software packages.
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Install Package
+    yum: name=vim,git state=latest
+
+
+Example 13: Install Apache server. Save the below code and run playbook as shown below.
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Install Package
+    yum: name=httpd state=present
+  - name: Start httpd service
+     service: name=httpd state=started
+
+Apart from the yum module, the service module is also used to start the httpd service. The tasks run from top to bottom synchronously.
+
+
+Example 14: Install JDK
+
+The following playbook will automate to install JDK 8 on all target machines or servers. JDK is a pre-requisite for most of the other software packages like Maven or Tomcat.
+
+---
+- hosts: webservers
+  become: true
+  vars:
+   download_url: http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm
+  
+  tasks:
+  - name: Download JDK 8 RPM file
+    command: "wget --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{download_url}} "
+  - name: Install JDK 8
+    command: "rpm -ivh jdk-8u171-linux-x64.rpm"
+
+
+Example 15: Install Maven
+
+The tasks performed are to download the maven file from the URL using the get_url module, extract the file downloaded, move it to a smaller directory, update and run the profile where the maven is added to the path.
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Download Maven
+    get_url: url=http://www-us.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz dest=/opt/niranjan/apache-maven-3.5.3-bin.tar.gz
+  - name: Extract Maven
+    command: tar xvf /opt/niranjan/apache-maven-3.5.3-bin.tar.gz -C /opt/niranjan
+  - name: Move to a smaller directory
+    command: mv /opt/niranjan/apache-maven-3.5.3 /opt/niranjan/maven
+  - name: Update Profile
+    copy: content="export M2_HOME=/opt/niranjan/maven \n" dest=/etc/profile.d/maven.sh
+  # lineinfile is used to add additional or append lines to existing files.
+  - lineinfile:
+     path: /etc/profile.d/maven.sh
+  line: 'export PATH=${M2_HOME}/bin:${PATH}'
+  - name: Source profile
+    shell: source /etc/profile.d/maven.sh
+
+Example 16: Install Tomcat 8
+
+The below playbook helps to install and start Tomcat 8 on to the target machines or servers.
+
+You can click here to copy the link location of the latest version of Tomcat 8. Click here for the URL containing Tomcat 8 tar file that I have used in this playbook.
+
+---
+- hosts: webservers
+  become: true
+  gather_facts: no
+  tasks:
+  - name: Download Tomcat
+    get_url: url=http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz dest=/home/ansible
+
+  - name: Extract the file downloaded tomcat file
+    command: tar xvf apache-tomcat-8.5.32.tar.gz
+ 
+  - name: Move the Tomcat directory to a smaller one
+    command: mv apache-tomcat-8.5.32 tomcat
+  
+  - name: Change Ownership and group of the Tomcat directory
+    file: path=/home/ansible/tomcat owner=ansible group=ansible mode=775 state=directory recurse=yes
+ 
+  - name: Start Tomcat
+    command: nohup /home/ansible/tomcat/bin/startup.sh # Execute command even after you have exited from the shell prompt
+    become: true
+    become_user: ansible
+
+
+Example 17: pre_tasks, post_tasks, and tags
+
+You can use pre_tasks and post_tasks to run certain tasks before or after running the main task.
+
+Normally in a playbook, you have so many tasks that are executed. What if you need to execute only a certain task? Tags are the answer to it. Let’s look at the below option which has all the 3 options. It has 2 tasks i.e. one with a TAG and one without a TAG.
+
+---
+- name: Pre , Post tasks and Tags example
+  hosts: localhost
+  become: true
+  tags:
+     - niranjan
+  pre_tasks:
+  - debug: msg="Started task with tag - niranjan.
+  tasks:
+   - name: Going to execute the main task
+     debug: msg="Currently in the target server"
+  post_tasks:
+  - debug: msg="Completed task with tag - niranjan.
+  - name: Play without tags
+    hosts: localhost
+    become: true
+    tasks:
+    - name: Command to list files
+      shell: ls -lrt > niranjan.txt
+Let’s see what happens while running the playbook with the –list-tags option
+
+$ ansible-playbook preposttagseg.yml --list-tags
+
+The output above looks better and clear. Play#1 has a tag niranjan but Play#2 does not have any tags.
+
+If you need to execute the tasks with the tag niranjan then the command to run would be:
+
+$ ansible-playbook preposttagseg.yml --tags niranjan
+The second play is not executed and the file is not created.
+
+Example 18: Handlers
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Install httpd package
+    yum: name=httpd state=latest
+  - name: Copy the httpd configuration file
+  copy: src=/home/ansible/httpd.final dest=/etc/httpd/conf/httpd.conf
+  - name: Copy index.html file
+  copy: src=/home/ansible/index.html dest=/var/www/html
+  notify:
+  - restart httpd
+  - name: Start httpd service
+  service: name=httpd state=started enabled=yes
+  handlers:
+  - name: restart httpd
+  service: name=httpd state=restarted
+
+
+👹️Ansible Vault
+For Example, consider the following task where a confidential job agreement is being copied.
+
+In such cases, you would need an Ansible Vault.
+
+---
+- hosts: webservers
+  become: true
+  tasks:
+  - name: Copying Confidential Job Agreement
+    copy: content="This is a Confidential Job Agreement" dest=/home/ansible/jobagreement.txt
+
+Following are the steps that you need follow to encrypt the above playbook files.
+#1) Creating new encrypted files
+$ ansible-vault create jobagreement.yml
+
+#2) To encrypt an existing yml file use the following
+$ ansible-vault encrypt existingfile.yml
+
+#3) Viewing encrypted file
+$ ansible-vault view jobagreement.yml
+
+#4) Editing encrypted files
+$ ansible-vault edit users.yml
+
+#5) Changing password of the encrypted files
+$ ansible-vault rekey jobagreement.yml
+
+#6) Run an encrypted Ansible playbook file
+$ ansible-playbook users.yml --ask-vault-pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

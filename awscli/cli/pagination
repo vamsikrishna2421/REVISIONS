@@ -1,0 +1,21 @@
+Pagination:to control the number of items included in the output when the AWS CLI calls a service's API 
+
+By default, the AWS CLI uses a page size of 1000 and retrieves all available items. For example, if you run aws s3api list-objects on an Amazon S3 bucket that contains 3,500 objects, the CLI makes four calls to Amazon S3, handling the service-specific pagination logic for you in the background and returning all 3,500 objects in the final output.
+$--page-size
+$aws s3api list-objects --bucket my-bucket --page-size 100
+{
+    "Contents": [
+...
+
+
+$--max-items
+To include fewer items at a time in the AWS CLI output, use the --max-items option. The AWS CLI still handles pagination with the service as described above, but prints out only the number of items at a time that you specify.
+
+$ aws s3api list-objects --bucket my-bucket --max-items 100
+{
+    "NextToken": "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ==",
+    "Contents": [
+...
+
+
+The specified AWS service might not return items in the same order each time you call. If you specify different values for --page-size and --max-items, you can get unexpected results with missing or duplicated items. To prevent this, use the same number for --page-size and --max-items to sync the AWS CLI's pagination with the pagination of the underlying service. You can also retrieve the whole list and perform any necessary paging operations locally.

@@ -1,0 +1,26 @@
+1.AWS Serverless architecture
+2.Security with aws cognito
+3.SQS,SNS
+4.Monitoring with cloudwatch
+5.Serverles application model.
+
+Why?
+1.Automation.
+2.Agile
+3.Devops
+
+What we do?
+1.Design an application end to end using aws serverless services.
+2.Design security for architecture.
+3.Looking at serverless components such as SQS,SNS
+4.Monitoring and logging
+5.Serverless apllication model.
+
+*AWS Lambda functions
+Specify the amount of memory.(Default 128Mb)
+Can specify timeout
+Only charged for amount of time runs.
+Assign IAm role to lambda function.
+
+
+
