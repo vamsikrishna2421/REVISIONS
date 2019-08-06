@@ -1,0 +1,117 @@
+NOTES FOR DOCKER SWARM
+
+To init docker swarm in master node
+#docker swarm init --advertising-addr 192.168.0.18
+copy the join token from output.
+
+to add worker nodes to master node.
+#docker swarm join --token <tokenSHA> 192.168.0.18:2377
+
+NOw to check all the nodes in swarm cluster
+#docker node ls
+
+TASK:create a service and remove it.
+#docker service --help
+#docker service create --name=service1 ubuntu:latest
+#docker service rm service1
+#docker service ls
+
+#docker service create --name=service2 nginx
+#docker service ls
+#docker ps //shows containers on that particular node only
+#docker service ps service1 //shows on which node it is running
+#docker service ps service2 
+
+
+#UPDATE
+increase replications of a service
+#docker service update service1 --replicas=4
+
+Lookat networks
+#docker network ls
+We will have new docker_gwbridge(bridge) and ingress(overlay) networks.
+
+We can create a new network also
+#docker network create --driver overlay mynetwork1
+#docker network create --driver overlay mynetwork2
+
+#docker network ls
+See new netwoks with scope as swarm.
+
+
+Lets delete a node and see what happens
+#docker stop service1.1
+Now automatically a new container is bought up.
+
+
+
+#SCALING
+#docker service scale service1=10
+#docker service scale service2=5
+
+#docker service ls
+#docker service scale service1=1 service2=2
+
+
+#STACK
+#docker stack deploy -c docker-stack.yaml voteapp
+
+#docker service ls
+
+If u need to change no.of replicas.
+Edit the stack file
+
+#docker stack deploy -c docker-stack.yml voteapp
+Now it updates.
+
+#docker ps //shows containers only in manager node.
+
+#docker service ls
+Now u have desired no. of replicas
+
+Check individual microservice containers location.
+#docker service ps <service-id>
+
+8080 port is used for visualizer to see what services are running in gui.
+
+Promote worker node to leader.
+#docker node promote node2 
+#docker node promote node3
+#docker node ls
+U will see unreachable manager status
+All these leader nodes use raft consensus in swarm mode.
+
+Demote back to worker node
+#docker node demote node2
+#docker node demote node3
+
+To see stacks
+#docker stack ls
+
+remove a stack
+#docker stack rm voteapp
+
+to remove services
+#docker service rm service1 service2
+
+//on that node
+To remove a node from swarm cluster
+#docker swarm leave 
+
+
+For databases we use database glusterFS
+We cannot use database with out shared file system
+or all servers are connected to single physical server.
+
+ 
+
+
+
+
+
+
+
+
+
+
+

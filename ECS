@@ -1,0 +1,32 @@
+Container Instance: EC2 Server where the container runs.
+Tasks: each container can be called as task.
+Rask definition: Image,CPU,Memory
+Service: Similar to docker service which can deploy a complete solution.
+
+
+====>Login to ec2 instance
+
+check docker version
+#docker info
+
+#docker ps
+u will seee one predeployed container named ecs agent.
+
+ECR: container Registry / images repository
+
+Lets create new container
+Go to task definitons.
+go to create a new task
+click EC2(among fargate and ec2)
+We create a task definition as json file.
+
+We have the file ECStaskDef1.json file with us.
+
+Now enter all details in task definitions
+Give the json file inside "configure via json"
+
+Then run task.
+You can find ip to nginx server in details of task in task definition.
+
+
+
